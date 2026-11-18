@@ -1,0 +1,57 @@
+name: Build ZIP package (Claude Code Desktop — Hamza Alfarai)
+
+# يبني الملف المضغوط release/ClaudeCode-HamzaAlfarai.zip ويضمّن فيه
+# أحدث إصدار مستقر من بايثون (مثبّت ويندوز الرسمي من python.org)
+# + أحدث Python Install Manager (.msix)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "claude_code_suite.py"
+      - "README.md"
+      - "install_python.bat"
+      - "run_claude_code.bat"
+      - "tools/**"
+      - "scripts/build_package.py"
+      - ".github/workflows/build-package.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-package-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Download latest Python + build ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/build_package.py
+
+      - name: Commit ZIP to branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add release/
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "Build ZIP package with latest Python ($(cat release/PYTHON_VERSION.txt | head -1)) [skip ci]"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
+
+      - name: Upload ZIP as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ClaudeCode-HamzaAlfarai
+          path: release/ClaudeCode-HamzaAlfarai.zip

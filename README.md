@@ -17,41 +17,36 @@
 
 ---
 
-## 📦 محتويات المجلد
+## 📦 محتويات الملف المضغوط
 
+- **`python-3.x.y-amd64.exe`** — **أحدث إصدار مستقر من Python** (المثبّت الرسمي من python.org، مرفق داخل الحزمة — يعمل بدون إنترنت)
+- **`python-manager-26.4.msix`** — Python Install Manager (أحدث إصدار رسمي) كخيار بديل
+- **`SHA256SUMS.txt`** — بصمات SHA-256 للتحقق من سلامة ملفات بايثون
 - **`claude_code_suite.py`** — الكود الرئيسي للبرنامج ومُنشئ ملف التثبيت (`EXE`)
-- **`install_python.bat`** — يثبّت **Python Install Manager 26.4** (أحدث إصدار رسمي) ثم **أحدث إصدار من Python** تلقائياً
-- **`tools/install_python.ps1`** — السكربت الذي يستدعيه الملف السابق
+- **`install_python.bat`** + **`tools/install_python.ps1`** — تثبيت بايثون المرفق بضغطة واحدة
 - **`run_claude_code.bat`** — تشغيل البرنامج / بناء ملف التثبيت بضغطة واحدة
 - **`README.md`** — هذا الدليل التعليمي
 
-> ملف `python-manager-26.4.msix` يُحمَّل تلقائياً من موقع **python.org** الرسمي عند تشغيل `install_python.bat`.
-> ويمكنك تحميله يدوياً من: https://www.python.org/ftp/python/pymanager/python-manager-26.4.msix ووضعه في نفس المجلد.
+> رقم إصدار بايثون المرفق مكتوب في [`release/PYTHON_VERSION.txt`](release/PYTHON_VERSION.txt).
+> يُبنى الملف المضغوط تلقائياً عبر GitHub Actions (`.github/workflows/build-package.yml`) الذي يجلب أحدث إصدار من python.org في كل مرة.
 
 ---
 
-## ⚠️ الخطوة 1 (إلزامية): تثبيت بايثون عبر `python-manager-26.4.msix`
+## ⚠️ الخطوة 1 (إلزامية): تثبيت بايثون
 
-لكي يعمل التطبيق وتتم عملية البناء والتحويل إلى `EXE` بنجاح، يجب أولاً تثبيت **Python Install Manager 26.4** (الأداة الرسمية لإدارة وتشغيل بيئات بايثون على ويندوز 10 و11).
-
-### الطريقة التلقائية (موصى بها):
+### الطريقة التلقائية (موصى بها — بدون إنترنت):
 1. اضغط **نقرتين مزدوجتين** على **`install_python.bat`**
-2. سيقوم السكربت بـ:
-   - تحميل `python-manager-26.4.msix` من python.org (إن لم يكن موجوداً في المجلد)
-   - تثبيته
-   - تثبيت **أحدث إصدار مستقر من Python** عبر الأمر `py install default`
+2. سيتم تثبيت **أحدث إصدار من Python** المرفق داخل الحزمة مع إضافته إلى `PATH` وتثبيت `pip` و`py` launcher.
 
-### الطريقة اليدوية:
-1. اضغط **نقرتين مزدوجتين** على الملف:
-   ```text
-   python-manager-26.4.msix
-   ```
-2. اضغط **Install / تثبيت**.
-3. افتح PowerShell واكتب:
-   ```powershell
-   py install default
-   py list
-   ```
+### الطريقة البديلة: Python Install Manager
+```powershell
+install_python.bat -UseManager
+```
+أو اضغط نقرتين على **`python-manager-26.4.msix`** ← **Install**، ثم في PowerShell:
+```powershell
+py install default
+py list
+```
 
 ---
 
