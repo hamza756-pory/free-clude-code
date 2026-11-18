@@ -355,7 +355,7 @@ class ChatViewModel(
                     val models = catalog.state.value
                     val status = buildString {
                         appendLine("Claude Code (Mobile) status")
-                        appendLine("  API key      ${SecureKeyStore.mask(keyStore.getApiKey())}  (encrypted, on-device)")
+                        appendLine("  API key      ${SecureKeyStore.mask(keyStore.getApiKey())}  (${keyStore.storageDescription()})")
                         appendLine("  Model        ${selectedModel.value}")
                         appendLine("  Free models  ${if (models.loading) "loading…" else models.models.size.toString()}")
                         appendLine("  Session      #$convId · ${msgs.count { it.role == MessageRole.USER }} prompts")

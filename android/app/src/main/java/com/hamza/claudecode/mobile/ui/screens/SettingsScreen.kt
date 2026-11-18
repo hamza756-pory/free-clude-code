@@ -76,7 +76,7 @@ fun SettingsScreen(
         ) {
             Section("API key")
             KeyValue("OpenRouter", SecureKeyStore.mask(apiKey))
-            KeyValue("Storage", "EncryptedSharedPreferences · AES-256")
+            KeyValue("Storage", keyViewModel.storageDescription())
             Row(verticalAlignment = Alignment.CenterVertically) {
                 TermButton(if (editingKey) "cancel" else "change key") {
                     keyViewModel.clearMessages()

@@ -61,7 +61,7 @@ class KeyViewModel(
                     false -> " · paid tier"
                     null -> ""
                 }
-                _state.value = KeyUiState(saved = true, info = "Key verified$tier. Stored encrypted on this device.")
+                _state.value = KeyUiState(saved = true, info = storedMessage("Key verified$tier."))
             } catch (e: OpenRouterException) {
                 if (e.httpCode == 401 || e.httpCode == 403) {
                     _state.value = KeyUiState(error = e.toTerminal())
@@ -79,7 +79,7 @@ class KeyViewModel(
         val key = _state.value.unverifiedKey ?: return
         keyStore.saveApiKey(key)
         catalog.refresh()
-        _state.value = KeyUiState(saved = true, info = "Key saved (not verified). Stored encrypted on this device.")
+        _state.value = KeyUiState(saved = true, info = storedMessage("Key saved (not verified)."))
     }
 
     fun deleteKey() {
@@ -92,6 +92,13 @@ class KeyViewModel(
     }
 
     fun maskedKey(): String = SecureKeyStore.mask(keyStore.getApiKey())
+
+    /** Where/how the key is stored, e.g. "EncryptedSharedPreferences · AES-256". */
+    fun storageDescription(): String = keyStore.storageDescription()
+
+    private fun storedMessage(prefix: String): String =
+        if (keyStore.isPersistent) "$prefix Stored with EncryptedSharedPreferences on this device."
+        else "$prefix Keystore unavailable: key kept for this session only (not written to disk)."
 
     companion object {
         const val KEYS_URL = "https://openrouter.ai/keys"

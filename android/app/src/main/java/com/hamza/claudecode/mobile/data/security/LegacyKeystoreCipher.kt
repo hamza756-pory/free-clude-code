@@ -15,11 +15,12 @@ import javax.crypto.spec.SecretKeySpec
 import javax.security.auth.x500.X500Principal
 
 /**
- * Encryption for Android 5.0 / 5.1 (API 21–22).
+ * Extra sealing layer for Android 5.0 / 5.1 (API 21–22), applied to values *before*
+ * they are written to EncryptedSharedPreferences.
  *
  * On those versions the Android Keystore cannot hold AES keys (that came in API 23),
- * so EncryptedSharedPreferences would store its keyset in clear text. Instead we use
- * the classic pattern:
+ * so EncryptedSharedPreferences/Tink stores its keyset unprotected. This class adds
+ * hardware-backed protection using the classic pattern:
  *   1. an RSA-2048 key pair generated *inside* the Android Keystore (never exportable),
  *   2. a random AES-256 key wrapped (encrypted) with that RSA public key,
  *   3. values encrypted with AES-256-GCM using the unwrapped AES key.

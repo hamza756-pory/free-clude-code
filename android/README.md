@@ -13,8 +13,10 @@
 
 **Android 5.0 (Lollipop) فما فوق** — `minSdk 21`, `targetSdk 35`.
 
-- Android 6+: المفتاح يُحفظ بـ `EncryptedSharedPreferences` (AES-256 داخل Android Keystore).
-- Android 5.x: تشفير AES-256-GCM بمفتاح مغلّف بمفتاح RSA داخل Android Keystore (لأن Keystore لا يدعم مفاتيح AES قبل Android 6).
+- المفتاح يُحفظ دائماً بـ **`EncryptedSharedPreferences` من AndroidX Security** على جميع الإصدارات (أسماء المفاتيح AES-256-SIV والقيم AES-256-GCM).
+- Android 6+: مفتاح التشفير الرئيسي (`MasterKey` AES-256-GCM) محفوظ داخل Android Keystore.
+- Android 5.x: لأن Keystore لا يدعم مفاتيح AES قبل Android 6، تُغلَّف القيمة أولاً بمفتاح RSA داخل Keystore ثم تُكتب في `EncryptedSharedPreferences` (طبقتا حماية).
+- لا يُكتب المفتاح على القرص بنص واضح أبداً؛ إذا تعطّل Keystore في جهاز ما يبقى المفتاح في الذاكرة للجلسة الحالية فقط.
 - Android 5 – 7.0: يتضمن التطبيق شهادات الجذر الحديثة (Mozilla/certifi) حتى يعمل HTTPS مع openrouter.ai رغم قِدم شهادات النظام.
 - رموز التيرمينال (✻ ⏺ ⎿ …) تُستبدل تلقائياً برموز مكافئة مضمّنة في الخط على Android 5/6 لتجنّب ظهور مربعات فارغة.
 
