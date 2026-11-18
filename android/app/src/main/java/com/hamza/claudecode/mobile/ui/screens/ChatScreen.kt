@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -39,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -128,8 +130,22 @@ fun ChatScreen(
     }
 
     // ---- Auto-scroll that follows the streaming output unless the user scrolls up --------
-    LaunchedEffect(listState.isScrollInProgress) {
-        if (!listState.isScrollInProgress) followOutput = !listState.canScrollForward
+    LaunchedEffect(listState) {
+        // Only *user* drags change follow mode; programmatic scrolls never do.
+        listState.interactionSource.interactions.collect { interaction ->
+            when (interaction) {
+                is DragInteraction.Start -> followOutput = false
+                is DragInteraction.Stop, is DragInteraction.Cancel -> {
+                    followOutput = !listState.canScrollForward
+                }
+            }
+        }
+    }
+    LaunchedEffect(listState) {
+        // Re-enable following once the user flings back to the very bottom.
+        snapshotFlow { listState.canScrollForward }.collect { canScroll ->
+            if (!canScroll && !listState.isScrollInProgress) followOutput = true
+        }
     }
     val lastLength = transcript.lastOrNull()?.let { it.text.length + (it.reasoning?.length ?: 0) } ?: 0
     LaunchedEffect(transcript.size, lastLength, followOutput) {
