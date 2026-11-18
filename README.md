@@ -17,6 +17,13 @@
 
 ---
 
+## 📱 جديد: تطبيق أندرويد أصلي — Claude Code (Mobile)
+
+تطبيق Kotlin + Jetpack Compose بنفس واجهة التيرمينال، يعمل بالنماذج المجانية من OpenRouter مع بث مباشر، أوامر Slash، إرفاق ملفات، وسجل محادثات.
+التفاصيل والتحميل: **[`android/README.md`](android/README.md)** · ملف `ClaudeCodeMobile.apk` في صفحة **Releases**.
+
+---
+
 ## 📦 محتويات المجلد
 
 - **`claude_code_suite.py`** — الكود الرئيسي للبرنامج ومُنشئ ملف التثبيت (`EXE`)
