@@ -1,0 +1,16 @@
+{
+  "name": "Hamza Link — تحكم بالحاسوب",
+  "short_name": "Hamza Link",
+  "description": "تكامل الهاتف والحاسوب مع Claude Code — تصميم Hamza Alfarai",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#090B16",
+  "theme_color": "#090B16",
+  "icons": [
+    { "src": "/static/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

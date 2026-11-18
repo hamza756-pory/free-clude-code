@@ -1,0 +1,87 @@
+name: Build ZIP package (Claude Code Desktop — Hamza Alfarai)
+
+# يبني الملف المضغوط release/ClaudeCode-HamzaAlfarai.zip ويضمّن فيه
+# أحدث إصدار مستقر من بايثون (مثبّت ويندوز الرسمي من python.org)
+# + أحدث Python Install Manager (.msix)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "claude_code_suite.py"
+      - "README.md"
+      - "install_python.bat"
+      - "run_claude_code.bat"
+      - "tools/**"
+      - "run_hamza_link.bat"
+      - "hamza_link/**"
+      - "scripts/build_package.py"
+      - ".github/workflows/build-package.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-package-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.x"
+
+      - name: Download latest Python + build ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python scripts/build_package.py
+          echo "::notice title=Bundled Python::$(tr '\n' ' ' < release/PYTHON_VERSION.txt)"
+          echo "::notice title=Sizes::$(ls -l _stage/ClaudeCode-HamzaAlfarai/ release/*.zip | awk '{print $5, $9}' | tr '\n' ' ')"
+
+      - name: Publish ZIP to GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v2.1.70"
+          ZIP="release/ClaudeCode-HamzaAlfarai.zip"
+          {
+            echo "## Claude Code Desktop v2.1.70 — تصميم Hamza Alfarai"
+            echo
+            echo "الملف المضغوط **ClaudeCode-HamzaAlfarai.zip** يحتوي على البرنامج + **أحدث إصدار من Python** (المثبّت الرسمي من python.org) + Python Install Manager."
+            echo
+            echo '```'
+            cat release/PYTHON_VERSION.txt
+            echo '```'
+            echo
+            echo "1. فك الضغط  2. شغّل install_python.bat  3. شغّل run_claude_code.bat"
+            echo
+            echo "المفاتيح غير مضمّنة لأسباب أمنية — أضفها عبر /keys أو متغيرات البيئة OPENROUTER_API_KEY و DEEPSEEK_API_KEY."
+          } > /tmp/notes.md
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            gh release edit "$TAG" --title "Claude Code Desktop v2.1.70 — تصميم Hamza Alfarai" --notes-file /tmp/notes.md
+            gh release upload "$TAG" "$ZIP" --clobber
+          else
+            gh release create "$TAG" "$ZIP" --target "${GITHUB_SHA}" \
+              --title "Claude Code Desktop v2.1.70 — تصميم Hamza Alfarai" --notes-file /tmp/notes.md
+          fi
+          echo "::notice title=Release::$(gh release view "$TAG" --json url,assets -q '.url + " " + (.assets[] | .name + " " + (.size|tostring))')"
+
+      - name: Commit Python version info to branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add release/PYTHON_VERSION.txt
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -q -m "Bundled $(head -1 release/PYTHON_VERSION.txt) in release ZIP [skip ci]"
+            if ! git push origin "HEAD:${GITHUB_REF_NAME}" > /tmp/push.log 2>&1; then
+              echo "::error title=git push failed::$(tail -8 /tmp/push.log | tr '\n' ' ')"
+              exit 1
+            fi
+          fi

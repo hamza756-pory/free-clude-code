@@ -295,6 +295,50 @@ def find_official_claude_exe() -> Path | None:
     return None
 
 
+# ==============================================================================
+#  Hamza Link — تكامل الحاسوب والهاتف (/phone)
+# ==============================================================================
+
+HAMZA_LINK_PORT = 8765
+
+
+def find_hamza_link_script() -> Path | None:
+    roots = [get_bundle_root(), Path(__file__).resolve().parent, Path.cwd()]
+    if getattr(sys, "frozen", False):
+        roots.insert(0, Path(sys.executable).parent)
+    for r in roots:
+        p = r / "hamza_link" / "hamza_link.py"
+        if p.exists():
+            return p
+    return None
+
+
+def launch_hamza_link() -> str:
+    """يشغّل Hamza Link (أو يفتح لوحته إن كان يعمل) ويعيد رسالة للمستخدم."""
+    import webbrowser
+
+    panel = f"http://127.0.0.1:{HAMZA_LINK_PORT}/desktop"
+    try:
+        with urllib.request.urlopen(f"http://127.0.0.1:{HAMZA_LINK_PORT}/api/health", timeout=1.5) as r:
+            if r.status == 200:
+                webbrowser.open(panel)
+                return f"Hamza Link يعمل بالفعل — تم فتح لوحة الحاسوب: {panel}"
+    except Exception:
+        pass
+    script = find_hamza_link_script()
+    if not script:
+        return "لم يتم العثور على hamza_link/hamza_link.py بجانب البرنامج."
+    if getattr(sys, "frozen", False):
+        py = shutil.which("py") or shutil.which("python") or shutil.which("python3")
+        if not py:
+            return "Hamza Link يحتاج Python — شغّل install_python.bat أولاً."
+    else:
+        py = sys.executable
+    flags = getattr(subprocess, "CREATE_NEW_CONSOLE", 0) if os.name == "nt" else 0
+    subprocess.Popen([py, str(script), "--port", str(HAMZA_LINK_PORT)], cwd=str(script.parent), creationflags=flags)
+    return f"تم تشغيل Hamza Link — امسح رمز QR من لوحة الحاسوب بهاتفك ({panel})"
+
+
 def get_ssl_context():
     try:
         import certifi
@@ -1907,7 +1951,8 @@ def run_app():
                         "  /clear         — مسح المحادثة وتصفير السياق\n"
                         "  /cd <path>     — تغيير مجلد العمل\n"
                         "  /official      — فتح claude.exe الرسمي في PowerShell بنفس المفاتيح والنموذج\n"
-                        "  /keys          — عرض أو تعديل مفاتيح OpenRouter و DeepSeek\n\n",
+                        "  /keys          — عرض أو تعديل مفاتيح OpenRouter و DeepSeek\n"
+                        "  /phone         — Hamza Link: ربط الهاتف والتحكم بالحاسوب منه وبالعكس\n\n",
                         "gray",
                     )
                 elif cmd in ("/usage", "/cost", "/context", "/stats"):
@@ -1942,6 +1987,8 @@ def run_app():
                     launch_official_cli(state["work_dir"], state["provider"], state["model"])
                 elif cmd == "/keys":
                     open_keys_dialog()
+                elif cmd in ("/phone", "/link", "/mobile"):
+                    append_term(f"📱 {launch_hamza_link()}\n\n", "green")
                 else:
                     append_term(f"Unknown command: {user_msg} (type /help)\n\n", "warn")
                 return
@@ -2078,6 +2125,9 @@ def run_app():
 if __name__ == "__main__":
     if "--app" in sys.argv:
         run_app()
+    elif "--phone" in sys.argv:
+        configure_console_utf8()
+        safe_print(launch_hamza_link())
     elif "--setup" in sys.argv:
         run_setup()
     else:
