@@ -13,6 +13,8 @@ on:
       - "install_python.bat"
       - "run_claude_code.bat"
       - "tools/**"
+      - "run_hamza_link.bat"
+      - "hamza_link/**"
       - "scripts/build_package.py"
       - ".github/workflows/build-package.yml"
 

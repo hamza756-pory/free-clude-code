@@ -32,6 +32,8 @@ PACKAGE_FILES = [
     "install_python.bat",
     "run_claude_code.bat",
     "tools/install_python.ps1",
+    "run_hamza_link.bat",
+    "hamza_link",  # تكامل الحاسوب والهاتف (مجلد كامل)
 ]
 
 
@@ -117,7 +119,10 @@ def main():
         src = ROOT / rel
         dst = STAGE / rel
         dst.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(src, dst)
+        if src.is_dir():
+            shutil.copytree(src, dst, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+        else:
+            shutil.copy2(src, dst)
 
     print("\n[1/3] Latest Python for Windows...")
     py_ver, py_url = latest_python()

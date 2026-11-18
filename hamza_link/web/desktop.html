@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hamza Link — لوحة الحاسوب</title>
+  <link rel="icon" href="/static/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/app.css">
+  <style>
+    .shell { max-width: 1500px; margin: 0 auto; padding: 18px 20px 28px; }
+    header.top { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; }
+    header.top .grow { flex: 1; }
+    .layout { display: grid; grid-template-columns: 330px minmax(0, 1fr) minmax(0, 1.05fr); gap: 16px; align-items: start; }
+    @media (max-width: 1250px) { .layout { grid-template-columns: 320px minmax(0, 1fr); } .col-3 { grid-column: 1 / -1; } }
+    @media (max-width: 820px) { .layout { grid-template-columns: 1fr; } }
+    .col { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+
+    .qr-box { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+    .qr {
+      background: #fff; padding: 12px; border-radius: 18px; width: 220px; height: 220px; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.1), 0 12px 50px rgba(162, 107, 255, 0.35);
+    }
+    .qr svg, .qr img { width: 100%; height: 100%; }
+    .pin { font-family: var(--mono); font-size: 34px; font-weight: 800; letter-spacing: 8px; direction: ltr;
+      background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .url { font-family: var(--mono); font-size: 13px; direction: ltr; color: #CFC6FF; word-break: break-all; }
+    .dev { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; background: var(--panel); border: 1px solid var(--border); }
+    .dev + .dev { margin-top: 8px; }
+    .dev .n { font-weight: 700; }
+    .dev .grow { flex: 1; min-width: 0; }
+    .chat { height: 430px; }
+    .log { height: 260px; }
+    .inbox-list { max-height: 560px; overflow-y: auto; }
+    .hero-strip {
+      display: flex; gap: 10px; align-items: center; padding: 10px 14px; border-radius: 14px;
+      background: linear-gradient(135deg, rgba(255,122,89,.12), rgba(162,107,255,.12)); border: 1px solid var(--border); font-size: 13px;
+    }
+    .drop { border: 1.5px dashed var(--border-2); border-radius: 14px; padding: 14px; text-align: center; color: var(--muted); cursor: pointer; transition: .15s; }
+    .drop.over { border-color: var(--a2); background: rgba(162,107,255,.08); color: var(--text); }
+    .term-mini { max-height: 220px; }
+  </style>
+</head>
+<body>
+<div class="shell">
+  <header class="top">
+    <div class="brand">
+      <img class="brand-logo" src="/static/icon.svg" alt="">
+      <div>
+        <div class="brand-name">Hamza <b>Link</b> <span class="muted small" id="ver"></span></div>
+        <div class="brand-sub">تكامل الحاسوب والهاتف مع Claude Code — <span id="credit"></span></div>
+      </div>
+    </div>
+    <div class="grow"></div>
+    <span class="pill"><span class="dot" id="srvDot"></span><span id="srvTxt">جاري الاتصال…</span></span>
+    <span class="pill">🖥️ <span id="pcName">—</span></span>
+    <span class="pill">📱 <span id="onlineCount">0</span> متصل</span>
+  </header>
+
+  <div class="layout">
+    <!-- ================= العمود 1: الاقتران + الأجهزة + الصلاحيات ================= -->
+    <div class="col">
+      <div class="card qr-box">
+        <h3 style="align-self:stretch">🔗 ربط هاتف جديد</h3>
+        <div class="qr" id="qr"></div>
+        <div class="muted small">امسح الرمز بكاميرا الهاتف (نفس شبكة Wi-Fi)<br>أو افتح الرابط وأدخل رمز الاقتران:</div>
+        <div class="pin" id="pin">——————</div>
+        <div class="url" id="url"></div>
+        <div class="row">
+          <select class="input sm" id="ipSel" style="width:auto"></select>
+          <button class="btn sm" id="newPin">🔄 رمز جديد</button>
+        </div>
+        <div class="small muted">الرمز يُستخدم مرة واحدة ثم يتغيّر تلقائياً.</div>
+      </div>
+
+      <div class="card">
+        <h3>📱 الأجهزة المقترنة</h3>
+        <div id="devices"><div class="empty">لا توجد أجهزة بعد</div></div>
+      </div>
+
+      <div class="card">
+        <h3>🛡️ ما يُسمح للهاتف بفعله</h3>
+        <div id="perms"></div>
+      </div>
+    </div>
+
+    <!-- ================= العمود 2: التحكم بالهاتف + الوارد ================= -->
+    <div class="col">
+      <div class="card stack">
+        <h3>🎮 التحكم بالهاتف <span class="spacer"></span>
+          <select class="input sm" id="target" style="width:auto"><option value="">كل الهواتف</option></select>
+        </h3>
+        <div class="grid-btns">
+          <button class="btn" data-push="ring"><span class="ic">🔔</span>رنين للعثور</button>
+          <button class="btn" data-push="stop_ring"><span class="ic">🔕</span>إيقاف الرنين</button>
+          <button class="btn" data-push="vibrate"><span class="ic">📳</span>اهتزاز</button>
+          <button class="btn" data-push="photo_request"><span class="ic">📷</span>طلب صورة</button>
+          <button class="btn" data-push="clip_request"><span class="ic">📋</span>طلب الحافظة</button>
+          <button class="btn" data-push="info_request"><span class="ic">ℹ️</span>معلومات الجهاز</button>
+        </div>
+        <textarea class="input" id="pushText" rows="3" placeholder="نص أو رابط لإرساله إلى الهاتف…"></textarea>
+        <div class="row wrap">
+          <button class="btn primary" id="sendText">💬 إرسال نص</button>
+          <button class="btn" id="sendLink">🔗 إرسال رابط</button>
+          <button class="btn" id="sendSpeak">🗣️ نطق على الهاتف</button>
+          <button class="btn" id="sendToast">✨ إشعار</button>
+          <button class="btn ghost" id="pasteClip" title="لصق حافظة الحاسوب">📋 من الحافظة</button>
+        </div>
+        <label class="drop" id="drop">
+          📎 اسحب ملفاً هنا أو انقر لإرساله إلى الهاتف
+          <input type="file" id="fileSend" multiple hidden>
+        </label>
+        <div class="small muted" id="sendStatus"></div>
+      </div>
+
+      <div class="card">
+        <h3>📥 الوارد من الهاتف <span class="spacer"></span><button class="btn sm" id="openInbox">📂 فتح المجلد</button></h3>
+        <div class="items inbox-list" id="inbox"><div class="empty">الصور والملفات والرسائل القادمة من الهاتف تظهر هنا.</div></div>
+      </div>
+
+      <div class="card hidden" id="shellCard">
+        <h3>💻 أوامر نفّذها الهاتف</h3>
+        <div class="term term-mini" id="shellLog"></div>
+      </div>
+    </div>
+
+    <!-- ================= العمود 3: Claude + السجل ================= -->
+    <div class="col col-3">
+      <div class="card stack">
+        <h3>✳️ Claude — جلسة مشتركة مع الهاتف <span class="spacer"></span>
+          <button class="btn sm" id="keysBtn">🔑 المفاتيح</button>
+          <button class="btn sm" id="aiReset" title="محادثة جديدة">🧹</button>
+        </h3>
+        <div class="row">
+          <select id="aiProvider" class="input" style="width:auto"></select>
+          <select id="aiModel" class="input grow"></select>
+        </div>
+        <div class="small muted" id="aiKeys"></div>
+        <div class="chat" id="chat"></div>
+        <div class="row">
+          <textarea id="aiIn" class="input grow" rows="2" placeholder="اكتب لـ Claude… (Enter للإرسال، Shift+Enter لسطر جديد)"></textarea>
+          <button class="btn primary" id="aiSend" style="align-self:stretch">إرسال</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🧾 سجل النشاط</h3>
+        <div class="log" id="log"></div>
+      </div>
+
+      <div class="hero-strip">
+        <span style="font-size:20px">💡</span>
+        <span>ثبّت تطبيق الهاتف: افتح الرابط في Chrome أو Safari ← «إضافة إلى الشاشة الرئيسية». المفاتيح والنماذج مشتركة مع <b>Claude Code</b> (الأمر <code>/phone</code>).</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="keysModal" class="modal-bg hidden">
+  <div class="modal stack">
+    <h2>🔑 مفاتيح API</h2>
+    <div class="muted small">تُحفظ على هذا الحاسوب فقط (~/.claude_code_gui_config.json) ويستخدمها Claude Code و Hamza Link معاً. اترك الحقل فارغاً لعدم التغيير.</div>
+    <label class="small">OpenRouter</label>
+    <input class="input mono ltr" id="kOr" placeholder="sk-or-v1-…" autocomplete="off">
+    <label class="small">DeepSeek</label>
+    <input class="input mono ltr" id="kDs" placeholder="sk-…" autocomplete="off">
+    <div class="row" style="justify-content:flex-end">
+      <button class="btn ghost" id="kCancel">إلغاء</button>
+      <button class="btn primary" id="kSave">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<script src="/static/vendor/qrcode.js"></script>
+<script src="/static/common.js"></script>
+<script src="/static/desktop.js"></script>
+</body>
+</html>
