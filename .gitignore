@@ -7,3 +7,4 @@ __pycache__/
 .claude_code_gui_config.json
 .env
 _stage/
+release/*.zip

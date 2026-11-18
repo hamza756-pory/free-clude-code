@@ -39,25 +39,47 @@ jobs:
         run: |
           python scripts/build_package.py
           echo "::notice title=Bundled Python::$(tr '\n' ' ' < release/PYTHON_VERSION.txt)"
-          ls -la release/
+          echo "::notice title=Sizes::$(ls -l _stage/ClaudeCode-HamzaAlfarai/ release/*.zip | awk '{print $5, $9}' | tr '\n' ' ')"
 
-      - name: Commit ZIP to branch
+      - name: Publish ZIP to GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v2.1.70"
+          ZIP="release/ClaudeCode-HamzaAlfarai.zip"
+          {
+            echo "## Claude Code Desktop v2.1.70 — تصميم Hamza Alfarai"
+            echo
+            echo "الملف المضغوط **ClaudeCode-HamzaAlfarai.zip** يحتوي على البرنامج + **أحدث إصدار من Python** (المثبّت الرسمي من python.org) + Python Install Manager."
+            echo
+            echo '```'
+            cat release/PYTHON_VERSION.txt
+            echo '```'
+            echo
+            echo "1. فك الضغط  2. شغّل install_python.bat  3. شغّل run_claude_code.bat"
+            echo
+            echo "المفاتيح غير مضمّنة لأسباب أمنية — أضفها عبر /keys أو متغيرات البيئة OPENROUTER_API_KEY و DEEPSEEK_API_KEY."
+          } > /tmp/notes.md
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            gh release edit "$TAG" --title "Claude Code Desktop v2.1.70 — تصميم Hamza Alfarai" --notes-file /tmp/notes.md
+            gh release upload "$TAG" "$ZIP" --clobber
+          else
+            gh release create "$TAG" "$ZIP" --target "${GITHUB_SHA}" \
+              --title "Claude Code Desktop v2.1.70 — تصميم Hamza Alfarai" --notes-file /tmp/notes.md
+          fi
+          echo "::notice title=Release::$(gh release view "$TAG" --json url,assets -q '.url + " " + (.assets[] | .name + " " + (.size|tostring))')"
+
+      - name: Commit Python version info to branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add release/
+          git add release/PYTHON_VERSION.txt
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -q -m "Build ZIP package with latest Python ($(head -1 release/PYTHON_VERSION.txt)) [skip ci]"
+            git commit -q -m "Bundled $(head -1 release/PYTHON_VERSION.txt) in release ZIP [skip ci]"
             if ! git push origin "HEAD:${GITHUB_REF_NAME}" > /tmp/push.log 2>&1; then
               echo "::error title=git push failed::$(tail -8 /tmp/push.log | tr '\n' ' ')"
               exit 1
             fi
           fi
-
-      - name: Upload ZIP as workflow artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ClaudeCode-HamzaAlfarai
-          path: release/ClaudeCode-HamzaAlfarai.zip
