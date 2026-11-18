@@ -9,6 +9,15 @@
 - من صفحة **[Releases](https://github.com/hamza756-pory/free-clude-code/releases)** حمّل `ClaudeCodeMobile.apk` وثبّته (فعّل "التثبيت من مصادر غير معروفة").
 - أو من تبويب **Actions → Android APK → Artifacts** لآخر بناء.
 
+## 📲 الأجهزة المدعومة
+
+**Android 5.0 (Lollipop) فما فوق** — `minSdk 21`, `targetSdk 35`.
+
+- Android 6+: المفتاح يُحفظ بـ `EncryptedSharedPreferences` (AES-256 داخل Android Keystore).
+- Android 5.x: تشفير AES-256-GCM بمفتاح مغلّف بمفتاح RSA داخل Android Keystore (لأن Keystore لا يدعم مفاتيح AES قبل Android 6).
+- Android 5 – 7.0: يتضمن التطبيق شهادات الجذر الحديثة (Mozilla/certifi) حتى يعمل HTTPS مع openrouter.ai رغم قِدم شهادات النظام.
+- رموز التيرمينال (✻ ⏺ ⎿ …) تُستبدل تلقائياً برموز مكافئة مضمّنة في الخط على Android 5/6 لتجنّب ظهور مربعات فارغة.
+
 ## 🔑 أول تشغيل
 
 1. تظهر شاشة الترحيب (Pixel Art + "Select login method").

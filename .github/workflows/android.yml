@@ -46,7 +46,9 @@ jobs:
             grep -E "\[(NewApi|InlinedApi|ObsoleteSdkInt|UnusedAttribute)\]" "$REPORT" | head -40 | while read -r line; do
               echo "::warning title=lint::$line"
             done
-            tail -3 "$REPORT"
+            echo "::notice title=lint summary::$(tail -1 "$REPORT")"
+          else
+            echo "::notice title=lint summary::no lint report found"
           fi
 
       - name: Collect APKs
