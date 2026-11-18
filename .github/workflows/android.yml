@@ -45,17 +45,18 @@ jobs:
           cp app/build/outputs/apk/debug/app-debug.apk dist/ClaudeCodeMobile-debug.apk
           ls -la dist
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: ClaudeCodeMobile-apk
           path: android/dist/*.apk
 
       - name: Publish GitHub release
         if: startsWith(github.ref, 'refs/tags/android-v')
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: android/dist/*.apk
           name: Claude Code Mobile ${{ github.ref_name }}
+          make_latest: false
           body: |
             Native Android app (Kotlin + Jetpack Compose) — Claude Code style terminal UI on free OpenRouter models.
             Install `ClaudeCodeMobile.apk`, then paste your OpenRouter API key on first launch (it is stored encrypted on the device).
