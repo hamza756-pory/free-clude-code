@@ -1,5 +1,6 @@
 package com.hamza.claudecode.mobile.ui.screens
 
+import com.hamza.claudecode.mobile.util.Glyph
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -52,7 +53,7 @@ fun HistoryScreen(
         }
         if (conversations.isEmpty()) {
             Text(
-                "  ⎿ No saved sessions yet.",
+                "  ${Glyph.ELBOW} No saved sessions yet.",
                 color = Term.TextDim,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(16.dp)

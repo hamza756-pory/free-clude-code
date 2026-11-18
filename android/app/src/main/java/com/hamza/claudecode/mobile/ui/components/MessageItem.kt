@@ -1,5 +1,6 @@
 package com.hamza.claudecode.mobile.ui.components
 
+import com.hamza.claudecode.mobile.util.Glyph
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -77,7 +78,7 @@ private fun UserLine(item: TranscriptItem, modifier: Modifier) {
     ) {
         if (!item.attachments.isNullOrBlank()) {
             Text(
-                text = "⎘ " + item.attachments.split(",").joinToString("  ⎘ ") { it.trim() },
+                text = "${Glyph.FILE} " + item.attachments.split(",").joinToString("  ${Glyph.FILE} ") { it.trim() },
                 style = MaterialTheme.typography.labelSmall,
                 color = Term.Blue,
                 modifier = Modifier.padding(bottom = 4.dp)
@@ -105,7 +106,7 @@ private fun AssistantBlock(item: TranscriptItem, modifier: Modifier) {
         }
         Row {
             Text(
-                "⏺ ",
+                "${Glyph.DOT} ",
                 style = MaterialTheme.typography.bodyMedium,
                 color = if (item.streaming) Term.Coral else Term.Text
             )
@@ -134,7 +135,7 @@ private fun AssistantBlock(item: TranscriptItem, modifier: Modifier) {
                 }
                 if (!item.streaming && !item.modelId.isNullOrBlank()) {
                     Text(
-                        text = "  ⎿ ${item.modelId}",
+                        text = "  ${Glyph.ELBOW} ${item.modelId}",
                         style = MaterialTheme.typography.labelSmall,
                         color = Term.TextFaint,
                         modifier = Modifier.padding(top = 4.dp)
@@ -150,7 +151,7 @@ private fun ReasoningBlock(reasoning: String, active: Boolean) {
     var expanded by remember { mutableStateOf(false) }
     Column(modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp)) {
         Text(
-            text = (if (expanded) "▾ " else "▸ ") + if (active) "✻ Thinking…" else "✻ Thought for a while (tap to ${if (expanded) "hide" else "show"})",
+            text = (if (expanded) "▾ " else "▸ ") + if (active) "${Glyph.STAR} Thinking…" else "${Glyph.STAR} Thought for a while (tap to ${if (expanded) "hide" else "show"})",
             style = MaterialTheme.typography.labelMedium.copy(fontStyle = FontStyle.Italic),
             color = Term.TextDim,
             modifier = Modifier.clickable { expanded = !expanded }.padding(vertical = 2.dp)
@@ -179,14 +180,14 @@ private fun ErrorBlock(text: String, modifier: Modifier) {
 @Composable
 private fun LocalBlock(text: String, modifier: Modifier) {
     Row(modifier = modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-        Text("  ⎿ ", style = MaterialTheme.typography.bodySmall, color = Term.TextFaint)
+        Text("  ${Glyph.ELBOW} ", style = MaterialTheme.typography.bodySmall, color = Term.TextFaint)
         SelectionContainer {
             Text(text, style = MaterialTheme.typography.bodySmall, color = Term.TextDim)
         }
     }
 }
 
-private val SPINNER_FRAMES = listOf("·", "✢", "✳", "✶", "✻", "✽", "✻", "✶", "✳", "✢")
+private val SPINNER_FRAMES = Glyph.SPINNER
 private val SPINNER_WORDS = listOf(
     "Thinking", "Pondering", "Computing", "Brewing", "Clauding", "Crafting", "Synthesizing", "Noodling"
 )
@@ -256,7 +257,7 @@ fun renderInline(text: String, showCursor: Boolean = false): AnnotatedString = b
                     appendInlineSpans(numbered.groupValues[3])
                 }
                 line.trim() == "---" || line.trim() == "***" -> {
-                    withStyle(SpanStyle(color = Term.TextFaint)) { append("‥".repeat(24)) }
+                    withStyle(SpanStyle(color = Term.TextFaint)) { append("${Glyph.DOTS}".repeat(24)) }
                 }
                 line.startsWith("> ") -> {
                     withStyle(SpanStyle(color = Term.TextDim, fontStyle = FontStyle.Italic)) {

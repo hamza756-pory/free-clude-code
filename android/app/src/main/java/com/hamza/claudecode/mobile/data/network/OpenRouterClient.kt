@@ -1,5 +1,6 @@
 package com.hamza.claudecode.mobile.data.network
 
+import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -26,6 +27,7 @@ import java.util.concurrent.TimeUnit
  *  - POST /api/v1/chat/completions  → streaming (SSE) chat completions
  */
 class OpenRouterClient(
+    private val context: Context,
     private val keyProvider: () -> String?
 ) {
 
@@ -43,6 +45,7 @@ class OpenRouterClient(
         // Free models may "think" for a long time before the first token.
         .readTimeout(180, TimeUnit.SECONDS)
         .retryOnConnectionFailure(true)
+        .apply { LegacyTls.configure(context, this) }
         .build()
 
     private fun Request.Builder.openRouterHeaders(key: String?): Request.Builder {

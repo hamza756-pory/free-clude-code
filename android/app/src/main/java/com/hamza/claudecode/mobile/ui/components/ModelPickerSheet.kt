@@ -1,5 +1,6 @@
 package com.hamza.claudecode.mobile.ui.components
 
+import com.hamza.claudecode.mobile.util.Glyph
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -121,7 +122,7 @@ fun ModelPickerContent(
                 .border(1.dp, Term.Border, RoundedCornerShape(4.dp))
                 .padding(horizontal = 10.dp, vertical = 8.dp)
         ) {
-            Text("⌕ ", color = Term.TextDim, style = MaterialTheme.typography.bodyMedium)
+            Text("${Glyph.SEARCH} ", color = Term.TextDim, style = MaterialTheme.typography.bodyMedium)
             Box(Modifier.weight(1f)) {
                 if (query.isEmpty()) {
                     Text("filter models…", color = Term.TextFaint, style = MaterialTheme.typography.bodyMedium)

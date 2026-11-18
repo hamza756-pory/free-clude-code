@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.hamza.claudecode.mobile"
-        minSdk = 26
+        minSdk = 21 // Android 5.0 Lollipop and above
         targetSdk = 35
         versionCode = 1
         versionName = "1.0.0"
@@ -48,6 +48,12 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+
+    lint {
+        abortOnError = false
+        textReport = true
+        textOutput = file("build/reports/lint-results.txt")
     }
 
     packaging {
@@ -87,6 +93,7 @@ dependencies {
 
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
+    implementation(libs.okhttp.tls)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.android)
 }

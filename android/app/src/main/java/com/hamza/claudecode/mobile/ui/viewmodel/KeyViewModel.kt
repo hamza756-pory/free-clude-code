@@ -1,5 +1,6 @@
 package com.hamza.claudecode.mobile.ui.viewmodel
 
+import com.hamza.claudecode.mobile.util.Glyph
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hamza.claudecode.mobile.data.network.OpenRouterClient
@@ -66,7 +67,7 @@ class KeyViewModel(
                     _state.value = KeyUiState(error = e.toTerminal())
                 } else {
                     _state.value = KeyUiState(
-                        warning = e.toTerminal() + "\n  ⎿ Could not verify the key. Save it anyway?",
+                        warning = e.toTerminal() + "\n  ${Glyph.ELBOW} Could not verify the key. Save it anyway?",
                         unverifiedKey = key
                     )
                 }

@@ -1,5 +1,6 @@
 package com.hamza.claudecode.mobile.data.network
 
+import com.hamza.claudecode.mobile.util.Glyph
 import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -21,8 +22,8 @@ class OpenRouterException(
         append("Error")
         if (httpCode != null) append(" $httpCode")
         append(" · ").append(title)
-        append("\n  ⎿ ").append(detail)
-        if (!hint.isNullOrBlank()) append("\n  ⎿ hint: ").append(hint)
+        append("\n  ${Glyph.ELBOW} ").append(detail)
+        if (!hint.isNullOrBlank()) append("\n  ${Glyph.ELBOW} hint: ").append(hint)
     }
 
     companion object {

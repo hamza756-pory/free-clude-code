@@ -1,5 +1,6 @@
 package com.hamza.claudecode.mobile.ui.screens
 
+import com.hamza.claudecode.mobile.util.Glyph
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -192,7 +193,7 @@ fun ChatScreen(
             Column(Modifier.weight(1f)) {
                 Text(
                     text = buildAnnotatedString {
-                        withStyle(SpanStyle(color = Term.Coral, fontWeight = FontWeight.Bold)) { append("✻ Claude Code") }
+                        withStyle(SpanStyle(color = Term.Coral, fontWeight = FontWeight.Bold)) { append("${Glyph.STAR} Claude Code") }
                         withStyle(SpanStyle(color = Term.TextDim)) { append(" (Mobile)") }
                     },
                     style = MaterialTheme.typography.titleMedium
@@ -213,7 +214,7 @@ fun ChatScreen(
             }
             TermButton("+new", color = Term.TextDim) { chatViewModel.newConversation() }
             TermButton("≡", color = Term.Text, onClick = onOpenHistory)
-            TermButton("⚙", color = Term.Text, onClick = onOpenSettings)
+            TermButton("${Glyph.GEAR}", color = Term.Text, onClick = onOpenSettings)
         }
         DottedDivider(Modifier.padding(horizontal = 12.dp, vertical = 4.dp))
 
@@ -268,7 +269,7 @@ fun ChatScreen(
                             .padding(start = 8.dp)
                     ) {
                         Text(
-                            "⎘ ${file.name} · ${formatSize(file.sizeBytes)}",
+                            "${Glyph.FILE} ${file.name} · ${formatSize(file.sizeBytes)}",
                             color = Term.Blue,
                             style = MaterialTheme.typography.labelSmall
                         )
@@ -340,7 +341,7 @@ fun ChatScreen(
                 .padding(bottom = 4.dp)
         ) {
             Text(
-                text = if (isStreaming) "⏵⏵ streaming · ■ to interrupt" else "⏵⏵ ? /help for commands",
+                text = if (isStreaming) "${Glyph.PLAY}${Glyph.PLAY} streaming · ■ to interrupt" else "${Glyph.PLAY}${Glyph.PLAY} ? /help for commands",
                 color = Term.TextFaint,
                 style = MaterialTheme.typography.labelSmall
             )
@@ -413,7 +414,7 @@ private fun WelcomeBox(model: String) {
     ) {
         Text(
             text = buildAnnotatedString {
-                withStyle(SpanStyle(color = Term.Coral)) { append("✻ ") }
+                withStyle(SpanStyle(color = Term.Coral)) { append("${Glyph.STAR} ") }
                 append("Welcome to ")
                 withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("Claude Code (Mobile)") }
                 append("!")

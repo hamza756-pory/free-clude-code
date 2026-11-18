@@ -1,5 +1,6 @@
 package com.hamza.claudecode.mobile.ui.screens
 
+import com.hamza.claudecode.mobile.util.Glyph
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -185,7 +186,7 @@ fun SettingsScreen(
 
 @Composable
 private fun Section(title: String) {
-    Text("✻ $title", color = Term.Coral, style = MaterialTheme.typography.titleSmall)
+    Text("${Glyph.STAR} $title", color = Term.Coral, style = MaterialTheme.typography.titleSmall)
     Spacer(Modifier.height(6.dp))
 }
 

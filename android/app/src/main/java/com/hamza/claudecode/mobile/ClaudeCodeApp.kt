@@ -23,7 +23,7 @@ class ClaudeCodeApp : Application() {
 
 class AppContainer(app: Application) {
     val keyStore: SecureKeyStore = SecureKeyStore(app)
-    val openRouter: OpenRouterClient = OpenRouterClient(keyProvider = { keyStore.getApiKey() })
+    val openRouter: OpenRouterClient = OpenRouterClient(context = app, keyProvider = { keyStore.getApiKey() })
     private val database: AppDatabase = AppDatabase.get(app)
     val chatRepository: ChatRepository = ChatRepository(database.chatDao())
     val modelCatalog: ModelCatalog = ModelCatalog(openRouter, keyStore)

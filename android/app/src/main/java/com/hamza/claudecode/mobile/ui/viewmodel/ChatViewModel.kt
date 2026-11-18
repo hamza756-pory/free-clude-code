@@ -1,5 +1,6 @@
 package com.hamza.claudecode.mobile.ui.viewmodel
 
+import com.hamza.claudecode.mobile.util.Glyph
 import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
@@ -267,7 +268,7 @@ class ChatViewModel(
                 if (partial.isNotBlank()) {
                     repository.addMessage(convId, MessageRole.ASSISTANT, partial, modelId = modelUsed)
                 }
-                persistAndRelease(convId, MessageRole.ERROR, err.toTerminal() + "\n  ⎿ model: $model", null)
+                persistAndRelease(convId, MessageRole.ERROR, err.toTerminal() + "\n  ${Glyph.ELBOW} model: $model", null)
             } finally {
                 _streaming.value = null
             }

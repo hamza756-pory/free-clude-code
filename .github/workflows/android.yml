@@ -38,6 +38,17 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon --stacktrace assembleDebug assembleRelease
 
+      - name: Lint (API compatibility down to Android 5.0)
+        run: |
+          ./gradlew --no-daemon lintDebug
+          REPORT=app/build/reports/lint-results.txt
+          if [ -f "$REPORT" ]; then
+            grep -E "\[(NewApi|InlinedApi|ObsoleteSdkInt|UnusedAttribute)\]" "$REPORT" | head -40 | while read -r line; do
+              echo "::warning title=lint::$line"
+            done
+            tail -3 "$REPORT"
+          fi
+
       - name: Collect APKs
         run: |
           mkdir -p dist
