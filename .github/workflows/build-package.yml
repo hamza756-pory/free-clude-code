@@ -27,16 +27,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.x"
 
       - name: Download latest Python + build ZIP
         env:
           GH_TOKEN: ${{ github.token }}
-        run: python scripts/build_package.py
+        run: |
+          python scripts/build_package.py
+          echo "::notice title=Bundled Python::$(tr '\n' ' ' < release/PYTHON_VERSION.txt)"
+          ls -la release/
 
       - name: Commit ZIP to branch
         run: |
@@ -46,8 +49,11 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "Build ZIP package with latest Python ($(cat release/PYTHON_VERSION.txt | head -1)) [skip ci]"
-            git push origin "HEAD:${GITHUB_REF_NAME}"
+            git commit -q -m "Build ZIP package with latest Python ($(head -1 release/PYTHON_VERSION.txt)) [skip ci]"
+            if ! git push origin "HEAD:${GITHUB_REF_NAME}" > /tmp/push.log 2>&1; then
+              echo "::error title=git push failed::$(tail -8 /tmp/push.log | tr '\n' ' ')"
+              exit 1
+            fi
           fi
 
       - name: Upload ZIP as workflow artifact
