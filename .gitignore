@@ -1,0 +1,8 @@
+build_cache/
+dist/
+__pycache__/
+*.pyc
+*.spec
+*.msix
+.claude_code_gui_config.json
+.env
