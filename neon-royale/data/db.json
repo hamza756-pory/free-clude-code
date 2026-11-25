@@ -1,0 +1,33 @@
+{
+  "players": {
+    "034bd53ee878cfe539caf4b4": {
+      "id": "034bd53ee878cfe539caf4b4",
+      "name": "حمرة",
+      "createdAt": 1795607978639,
+      "currency": 1022,
+      "xp": 302,
+      "level": 6,
+      "owned": [
+        "outfit_recruit",
+        "back_none",
+        "pick_default",
+        "wrap_none",
+        "outfit_neon"
+      ],
+      "equipped": {
+        "outfit": "outfit_neon",
+        "backbling": "back_none",
+        "pickaxe": "pick_default",
+        "wrap": "wrap_none"
+      },
+      "lastDailyClaim": "2026-11-25",
+      "lifetime": {
+        "matches": 4,
+        "kills": 16,
+        "wins": 4,
+        "damage": 3250
+      },
+      "streak": 1
+    }
+  }
+}

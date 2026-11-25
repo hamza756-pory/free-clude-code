@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>NEON ROYALE — باتل رويال مجاني</title>
+<link rel="stylesheet" href="/style.css" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230a1030'/%3E%3Cpath d='M16 5l9 16H7z' fill='%2313e8c8'/%3E%3C/svg%3E" />
+</head>
+<body>
+
+<!-- ============================ AUTH ============================ -->
+<div id="authScreen" class="screen">
+  <div class="auth-card">
+    <div class="logo">
+      <span class="mark">▲</span>
+      <h1>NEON <b>ROYALE</b></h1>
+      <p class="tag">باتل رويال مجاني بالكامل — بناء • عواصف • 64 لاعباً • سكنات ومتجر يومي</p>
+    </div>
+    <label class="field">
+      <span>اسم اللاعب</span>
+      <input id="nameInput" maxlength="18" placeholder="اكتب اسمك في اللعبة" autocomplete="off" />
+    </label>
+    <button id="createBtn" class="btn primary big">ابدأ اللعب</button>
+    <p class="fine">تحصل عند البداية على 600 عملة + 3 أيام مكافآت ترحيبية. لا حاجة لبريد أو كلمة مرور.</p>
+    <p class="fine dim">أصول ورسومات وعلامات هذا المشروع أصلية 100% — لا تحتوي أي محتوى أو ملف من أي لعبة تجارية.</p>
+  </div>
+</div>
+
+<!-- ============================ APP ============================ -->
+<div id="app" class="screen hidden">
+  <header class="topbar">
+    <div class="brand"><span class="mark">▲</span> NEON <b>ROYALE</b></div>
+    <div class="player-chip">
+      <div class="avatar" id="avatarCanvas"></div>
+      <div class="meta">
+        <b id="playerName">—</b>
+        <div class="level-line">
+          <span id="levelText">مستوى 1</span>
+          <div class="xpbar"><i id="xpFill"></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="top-right">
+      <div class="wallet" title="عملات"><span class="coin">◈</span> <b id="coinText">0</b></div>
+      <button id="dailyBtn" class="btn small gold">مكافأة اليوم</button>
+      <button id="playBtn" class="btn primary">العب ▸</button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="shop">المتجر</button>
+    <button class="tab" data-tab="locker">الخزانة</button>
+    <button class="tab" data-tab="stats">الإحصائيات</button>
+  </nav>
+
+  <main>
+    <!-- SHOP -->
+    <section id="tab-shop" class="tabpane active">
+      <div class="pane-head">
+        <h2>متجر اليوم</h2>
+        <div class="rotator">يتغيّر بعد <b id="rotTimer">--:--:--</b></div>
+      </div>
+      <div id="shopGrid" class="grid"></div>
+      <p id="shopEmpty" class="empty hidden">المتجر قيد التجهيز…</p>
+    </section>
+
+    <!-- LOCKER -->
+    <section id="tab-locker" class="tabpane">
+      <div class="locker-layout">
+        <aside class="preview-card">
+          <canvas id="previewCanvas" width="360" height="460"></canvas>
+          <div class="preview-name" id="previewName">مجنّد المدينة</div>
+          <div class="preview-rarity" id="previewRarity">عادي</div>
+          <button id="equipPreviewBtn" class="btn primary wide hidden">تجهيز</button>
+        </aside>
+        <div class="locker-main">
+          <div class="slot-tabs" id="slotTabs"></div>
+          <div id="lockerGrid" class="grid cosmetics"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section id="tab-stats" class="tabpane">
+      <div class="pane-head"><h2>الإحصائيات</h2></div>
+      <div class="stat-grid">
+        <div class="stat"><span>مباريات</span><b id="stMatches">0</b></div>
+        <div class="stat"><span>انتصارات</span><b id="stWins">0</b></div>
+        <div class="stat"><span>إقصاءات</span><b id="stKills">0</b></div>
+        <div class="stat"><span>ضرر كلي</span><b id="stDamage">0</b></div>
+        <div class="stat"><span>مستوى الموسم</span><b id="stLevel">1</b></div>
+        <div class="stat"><span>مقتنيات</span><b id="stOwned">0</b></div>
+      </div>
+      <div class="pane-head"><h2>إعدادات التحكم</h2></div>
+      <ul class="keys">
+        <li><kbd>W A S D</kbd> حركة</li>
+        <li><kbd>Shift</kbd> جري</li>
+        <li><kbd>زر الماوس الأيسر</kbd> إطلاق / بناء</li>
+        <li><kbd>E</kbd> تسلسل الأسلحة &nbsp;•&nbsp; <kbd>R</kbd> تعبئة &nbsp;•&nbsp; <kbd>F</kbd> التقاط</li>
+        <li><kbd>Tab</kbd> تبديل وضع البناء &nbsp;•&nbsp; <kbd>1</kbd>/<kbd>2</kbd> جدار &nbsp;•&nbsp; <kbd>3</kbd> منحدر &nbsp;•&nbsp; <kbd>4</kbd> أرضية</li>
+        <li><kbd>زر الماوس الأيمن</kbd> إلغاء البناء</li>
+      </ul>
+    </section>
+  </main>
+</div>
+
+<!-- ============================ GAME ============================ -->
+<div id="gameScreen" class="screen hidden">
+  <canvas id="gameCanvas"></canvas>
+
+  <div class="hud">
+    <div class="hud-top">
+      <div class="pill">أحياء <b id="hudAlive">64</b></div>
+      <div class="pill">إقصاءات <b id="hudKills">0</b></div>
+      <div class="pill" id="stormPill">العاصفة <b id="hudStorm">—</b></div>
+      <button id="exitGame" class="btn small ghost" title="انسحاب">✕</button>
+    </div>
+
+    <div class="hud-left">
+      <div class="matbar">
+        <div class="mat wood"><span>خشب</span><b id="hudWood">0</b></div>
+        <div class="mat stone"><span>حجر</span><b id="hudStone">0</b></div>
+        <div class="mat metal"><span>معدن</span><b id="hudMetal">0</b></div>
+      </div>
+      <div class="buildbadge hidden" id="buildBadge">بناء: <b id="hudBuild">جدار</b></div>
+    </div>
+
+    <div class="hud-bottom">
+      <div class="bars">
+        <div class="bar shield"><i id="shieldFill"></i><span id="shieldText">0</span></div>
+        <div class="bar hp"><i id="hpFill"></i><span id="hpText">100</span></div>
+      </div>
+      <div class="weaponbox">
+        <div class="wname" id="hudWeapon">بلا سلاح</div>
+        <div class="wammo"><b id="hudMag">0</b> / <span id="hudAmmo">0</span></div>
+        <div class="reload hidden" id="reloadTag">تعبئة…</div>
+      </div>
+    </div>
+
+    <div class="prompt hidden" id="pickupPrompt">اضغط <kbd>F</kbd> للالتقاط</div>
+    <div class="toasts" id="toasts"></div>
+    <div class="killfeed" id="killfeed"></div>
+    <div class="storm-warn hidden" id="stormWarn">أنت داخل العاصفة! تحرك للمركز</div>
+  </div>
+
+  <div class="result hidden" id="resultScreen">
+    <div class="result-card">
+      <h2 id="resultTitle">انتهت المباراة</h2>
+      <div class="result-place" id="resultPlace">#1</div>
+      <div class="result-rows">
+        <div><span>إقصاءات</span><b id="resKills">0</b></div>
+        <div><span>ضرر</span><b id="resDamage">0</b></div>
+        <div><span>دقة</span><b id="resAcc">0%</b></div>
+        <div><span>خبرة</span><b id="resXp">+0</b></div>
+        <div><span>عملات</span><b id="resCoins">+0</b></div>
+      </div>
+      <div class="result-actions">
+        <button id="againBtn" class="btn primary">مباراة أخرى</button>
+        <button id="toLobbyBtn" class="btn ghost">الخزانة والمتجر</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="/js/main.js"></script>
+</body>
+</html>

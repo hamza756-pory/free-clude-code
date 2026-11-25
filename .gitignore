@@ -6,3 +6,6 @@ __pycache__/
 *.msix
 .claude_code_gui_config.json
 .env
+
+# neon-royale
+data/db.json
